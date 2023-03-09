@@ -24,6 +24,7 @@
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.IdentityManagementServiceUtil" %>
 <%@ page import="org.wso2.carbon.identity.mgt.endpoint.util.client.model.User" %>
 <%@ page import="org.wso2.carbon.identity.core.util.IdentityTenantUtil" %>
+<%@ page import="org.wso2.carbon.identity.captcha.util.CaptchaUtil" %>
 <%@ page import="java.io.File" %>
 <%@ page import="java.util.Map" %>
 <%@ page import="java.util.Enumeration" %>
@@ -77,6 +78,15 @@
     layoutData.put("containerSize", "medium");
 %>
 
+<%
+    boolean reCaptchaEnabled = false;
+    if (request.getAttribute("reCaptcha") != null && "TRUE".equalsIgnoreCase((String) request.getAttribute("reCaptcha"))) {
+        reCaptchaEnabled = true;
+    } else if (request.getParameter("reCaptcha") != null && Boolean.parseBoolean(request.getParameter("reCaptcha"))) {
+        reCaptchaEnabled = true;
+    }
+%>
+
 <!doctype html>
 <html lang="en-US">
 <head>
@@ -89,6 +99,14 @@
     <% } else { %>
     <jsp:include page="includes/header.jsp"/>
     <% } %>
+    <%
+        if (reCaptchaEnabled) {
+            String reCaptchaAPI = CaptchaUtil.reCaptchaAPIURL();
+    %>
+    <script src='<%=(reCaptchaAPI)%>'></script>
+    <%
+        }
+    %>
 </head>
 <body class="login-portal layout recovery-layout">
     <layout:main layoutName="<%= layout %>" layoutFileRelativePath="<%= layoutFileRelativePath %>" data="<%= layoutData %>" >
@@ -154,6 +172,23 @@
                         </div>
                         <% } %>
 
+                        <%
+                            if (reCaptchaEnabled) {
+                                String reCaptchaKey = CaptchaUtil.reCaptchaSiteKey();
+                        %>
+                        <div class="field">
+                            <div class="g-recaptcha"
+                                data-size="invisible"
+                                data-callback="onCompleted"
+                                data-action="register"
+                                data-sitekey="<%=Encode.forHtmlContent(reCaptchaKey)%>"
+                            >
+                            </div>
+                        </div>
+                        <%
+                            }
+                        %>
+
                         <div class="ui divider hidden"></div>
 
                         <div class="align-right buttons">
@@ -209,6 +244,10 @@
             }
         });
 
+        function onCompleted() {
+            $('#register').submit();
+        }
+
         function goBack() {
             window.history.back();
         }
@@ -228,7 +267,16 @@
                         console.warn("Prevented a possible double submit event");
                     } else {
                         e.preventDefault();
-
+                        <%
+                            if (reCaptchaEnabled) {
+                        %>
+                        if (!grecaptcha.getResponse()) {
+                            grecaptcha.execute();
+                            return;
+                        }
+                        <%
+                            }
+                        %>
                         var userName = document.getElementById("username");
                         var normalizedUsername = userName.value.trim();
                         userName.value = normalizedUsername;
