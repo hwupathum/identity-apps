@@ -5828,6 +5828,19 @@ export const console: ConsoleNS = {
                     passwordPolicies : {
                         name: "මුරපද ප්රතිපත්ති",
                         connectors: {
+                            passwordExpiry: {
+                                friendlyName: "Password Expiry",
+                                properties: {
+                                    enablePasswordExpiry: {
+                                        hint: "Enforce users to reset the password after configured number of days.",
+                                        label: "Enable password expiry"
+                                    },
+                                    passwordExpiryInDays: {
+                                        hint: "Number of days after which the password expires.",
+                                        label: "Password expiry in days"
+                                    }
+                                }
+                            },
                             passwordHistory: {
                                 friendlyName: "මුරපද ඉතිහාසය",
                                 properties: {

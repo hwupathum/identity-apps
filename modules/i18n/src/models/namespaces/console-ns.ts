@@ -3707,6 +3707,19 @@ export interface ConsoleNS {
                     passwordPolicies : {
                         name: string;
                         connectors: {
+                            passwordExpiry: {
+                                friendlyName: string,
+                                properties: {
+                                    enablePasswordExpiry: {
+                                        hint: string,
+                                        label: string
+                                    },
+                                    passwordExpiryInDays: {
+                                        hint: string,
+                                        label: string
+                                    }
+                                }
+                            },
                             passwordHistory: {
                                 friendlyName: string;
                                 properties: {
