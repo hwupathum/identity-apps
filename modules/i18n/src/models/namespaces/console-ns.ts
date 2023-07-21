@@ -3710,11 +3710,11 @@ export interface ConsoleNS {
                             passwordExpiry: {
                                 friendlyName: string,
                                 properties: {
-                                    enablePasswordExpiry: {
+                                    passwordExpiryEnablePasswordExpiry: {
                                         hint: string,
                                         label: string
                                     },
-                                    passwordExpiryInDays: {
+                                    passwordExpiryPasswordExpiryInDays: {
                                         hint: string,
                                         label: string
                                     }

@@ -5983,11 +5983,11 @@ export const console: ConsoleNS = {
                             passwordExpiry: {
                                 friendlyName: "Password Expiry",
                                 properties: {
-                                    enablePasswordExpiry: {
+                                    passwordExpiryEnablePasswordExpiry: {
                                         hint: "Enforce users to reset the password after configured number of days.",
                                         label: "Enable password expiry"
                                     },
-                                    passwordExpiryInDays: {
+                                    passwordExpiryPasswordExpiryInDays: {
                                         hint: "Number of days after which the password expires.",
                                         label: "Password expiry in days"
                                     }
