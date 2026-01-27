@@ -28,6 +28,7 @@ import React, { ReactElement, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Dropdown, DropdownProps, Icon } from "semantic-ui-react";
 import { ConsentsList } from "../components/consents-list";
+import { CreateConsentWizard } from "../components/create-consent-wizard";
 import { ConsentListItemInterface, ConsentType } from "../models/consents";
 
 /**
@@ -52,23 +53,21 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
     const [listItemLimit, setListItemLimit] = useState<number>(UIConstants.DEFAULT_RESOURCE_LIST_ITEM_LIMIT);
     const [startIndex, setStartIndex] = useState<number>(1);
     const [selectedType, setSelectedType] = useState<string>("All");
+    const [showCreateWizard, setShowCreateWizard] = useState<boolean>(false);
 
     // Mock data for consents
     const [consents] = useState<ConsentListItemInterface[]>([
         {
-            description: "Consent for Privacy Policy.",
             id: "1",
             name: "Privacy Policy",
             type: ConsentType.POLICY
         },
         {
-            description: "Consent for Terms and Conditions.",
             id: "2",
             name: "Terms and Conditions",
             type: ConsentType.POLICY
         },
         {
-            description: "Consent for using data for internal analytics.",
             id: "3",
             name: "Analytics Usage Consent",
             type: ConsentType.DATA_USAGE
@@ -125,7 +124,7 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
             data-componentid={`${componentId}-layout`}
             action={(
                 <PrimaryButton
-                    onClick={() => { /* Handle Add Consent */ }}
+                    onClick={() => { setShowCreateWizard(true); }}
                     data-componentid={`${componentId}-add-button`}
                 >
                     <Icon name="add" />
@@ -184,7 +183,7 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
                 <ConsentsList
                     list={filteredConsents}
                     isLoading={false}
-                    onAddConsentClick={() => { }}
+                    onAddConsentClick={() => setShowCreateWizard(true)}
                     onEditConsentClick={(consent: ConsentListItemInterface) => {
                         // eslint-disable-next-line no-console
                         console.log("Edit consent", consent);
@@ -196,6 +195,18 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
                     data-componentid={`${componentId}-list`}
                 />
             </ListLayout>
+            {
+                showCreateWizard && (
+                    <CreateConsentWizard
+                        closeWizard={() => setShowCreateWizard(false)}
+                        onUpdate={() => {
+                            // TODO: Refresh the list or handle the creation
+                            setShowCreateWizard(false);
+                        }}
+                        data-componentid={`${componentId}-create-wizard`}
+                    />
+                )
+            }
         </PageLayout>
     );
 };

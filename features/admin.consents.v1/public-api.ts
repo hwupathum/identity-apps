@@ -18,4 +18,5 @@
 
 export { default as ConsentsPage } from "./pages/consents";
 export * from "./components/consents-list";
+export * from "./components/create-consent-wizard";
 export * from "./models/consents";

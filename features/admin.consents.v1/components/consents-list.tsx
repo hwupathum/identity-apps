@@ -144,7 +144,6 @@ export const ConsentsList = (props: ConsentsListProps): ReactElement => {
 
                             <Header.Content>
                                 {consent.name}
-                                <Header.Subheader>{consent.description}</Header.Subheader>
                             </Header.Content>
                         </Header>
                     );

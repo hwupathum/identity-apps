@@ -16,6 +16,8 @@
  * under the License.
  */
 
+import { FunctionComponent, ReactElement, SVGProps } from "react";
+
 /**
  * Consent interface.
  */
@@ -23,7 +25,6 @@ export interface ConsentInterface {
     id: string;
     name: string;
     type: string;
-    description: string;
 }
 
 /**
@@ -33,7 +34,6 @@ export interface ConsentListItemInterface {
     id: string;
     name: string;
     type: string;
-    description: string;
 }
 
 /**
@@ -42,4 +42,13 @@ export interface ConsentListItemInterface {
 export enum ConsentType {
     DATA_USAGE = "Data Usage",
     POLICY = "Policy"
+}
+
+/**
+ * Interface for wizard step.
+ */
+export interface WizardStepInterface {
+    name: string;
+    icon: FunctionComponent<SVGProps<SVGSVGElement>> | ReactElement;
+    title: string;
 }
