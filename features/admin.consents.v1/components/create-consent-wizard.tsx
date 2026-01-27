@@ -21,8 +21,10 @@ import { Field, Forms, useTrigger } from "@wso2is/forms";
 import { Heading, LinkButton, PrimaryButton, Steps, useWizardAlert } from "@wso2is/react-components";
 import React, { FunctionComponent, ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
+import Typography from "@oxygen-ui/react/Typography";
 import { Grid, Icon, Modal } from "semantic-ui-react";
 import { ConsentType, WizardStepInterface } from "../models/consents";
+import UserAttributeList, { SelectedUserAttributeInterface } from "./user-attributes/user-attribute-list";
 import { getConsentWizardStepIcons } from "../configs/ui";
 
 /**
@@ -72,6 +74,8 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
     const [submitBasicDetails, setSubmitBasicDetails] = useTrigger();
     const [submitAdvancedDetails, setSubmitAdvancedDetails] = useTrigger();
 
+    const [selectedUserAttributes, setSelectedUserAttributes] = useState<SelectedUserAttributeInterface[]>([]);
+
     /**
      * Handles the wizard finish action.
      *
@@ -111,6 +115,7 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
      */
     const handleAdvancedDetailsSubmit = (values: any) => {
         const data = {
+            attributes: selectedUserAttributes,
             description: values.get("description"),
             policyUrl: values.get("policyUrl"),
             updateNoticeMessage: values.get("updateNoticeMessage")
@@ -235,6 +240,23 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
                                             required={false}
                                             type="text"
                                             value={wizardState?.advanced?.updateNoticeMessage}
+                                        />
+                                    </Grid.Column>
+                                </Grid.Row>
+                            )}
+                            {wizardState?.basic?.type === ConsentType.DATA_USAGE && (
+                                <Grid.Row>
+                                    <Grid.Column width={16}>
+                                        <Typography variant="h6" className="heading-container" >
+                                            User Attributes
+                                        </Typography>
+                                        <UserAttributeList
+                                            initialValues={selectedUserAttributes}
+                                            onAttributesChange={(hasChanged: boolean, selectedUserAttributes: SelectedUserAttributeInterface[]) => {
+                                                setSelectedUserAttributes(selectedUserAttributes);
+                                            }}
+                                            isReadOnly={false}
+                                            data-componentid={`${componentId}-user-attributes`}
                                         />
                                     </Grid.Column>
                                 </Grid.Row>
