@@ -15,8 +15,26 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import Box from "@oxygen-ui/react/Box/Box";
+import { EmphasizedSegment } from "@wso2is/react-components";
+import React from "react";
 
-export { default as ConsentsPage } from "./pages/consents";
-export { default as ConsentEditPage } from "./pages/consent-edit";
-export * from "./components/consents-list";
-export * from "./components/create-consent-wizard";
+interface ViewConsentUsersProps {
+    consentId: string;
+}
+
+export const ViewConsentUsers = (props: ViewConsentUsersProps) => {
+    const { consentId } = props;
+
+    return (
+        <EmphasizedSegment
+            padded="very"
+            className="consent-policy-form"
+        >
+            <Box className="form-container with-max-width">
+
+                View Consent Users for consent: {consentId}
+            </Box>
+        </EmphasizedSegment>
+    );
+};

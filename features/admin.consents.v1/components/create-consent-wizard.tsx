@@ -17,9 +17,10 @@
  */
 
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
-import { Field, Forms, useTrigger } from "@wso2is/forms";
+import { FinalForm, FinalFormField, TextFieldAdapter, SelectFieldAdapter, FormRenderProps } from "@wso2is/form";
+import { DropdownChild } from "@wso2is/forms";
 import { Heading, LinkButton, PrimaryButton, Steps, useWizardAlert } from "@wso2is/react-components";
-import React, { FunctionComponent, ReactElement, useState } from "react";
+import React, { FunctionComponent, ReactElement, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Typography from "@oxygen-ui/react/Typography";
 import { Grid, Icon, Modal } from "semantic-ui-react";
@@ -68,11 +69,11 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
     const [alert, setAlert, alertComponent] = useWizardAlert();
 
     const [currentStep, setCurrentWizardStep] = useState<number>(0);
-    const [wizardState, setWizardState] = useState<any>(null);
+    const [wizardState, setWizardState] = useState<any>({ basic: { type: ConsentType.POLICY } });
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-    const [submitBasicDetails, setSubmitBasicDetails] = useTrigger();
-    const [submitAdvancedDetails, setSubmitAdvancedDetails] = useTrigger();
+    const basicFormRef = useRef<any>(null);
+    const advancedFormRef = useRef<any>(null);
 
     const [selectedUserAttributes, setSelectedUserAttributes] = useState<SelectedUserAttributeInterface[]>([]);
 
@@ -100,11 +101,7 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
      * @param values - Form values.
      */
     const handleBasicDetailsSubmit = (values: any) => {
-        const data = {
-            name: values.get("name"),
-            type: values.get("type")
-        };
-        setWizardState({ ...wizardState, basic: data });
+        setWizardState({ ...wizardState, basic: values });
         setCurrentWizardStep(1);
     };
 
@@ -115,10 +112,8 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
      */
     const handleAdvancedDetailsSubmit = (values: any) => {
         const data = {
-            attributes: selectedUserAttributes,
-            description: values.get("description"),
-            policyUrl: values.get("policyUrl"),
-            updateNoticeMessage: values.get("updateNoticeMessage")
+            ...values,
+            attributes: selectedUserAttributes
         };
 
         handleWizardFinish({ ...wizardState, advanced: data });
@@ -128,10 +123,10 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
      * Navigates to the next step.
      */
     const navigateToNext = () => {
-        if (currentStep === 0) {
-            setSubmitBasicDetails();
-        } else {
-            setSubmitAdvancedDetails();
+        if (currentStep === 0 && basicFormRef.current) {
+            basicFormRef.current.handleSubmit();
+        } else if (currentStep === 1 && advancedFormRef.current) {
+            advancedFormRef.current.handleSubmit();
         }
     };
 
@@ -151,118 +146,126 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
         switch (currentStep) {
             case 0:
                 return (
-                    <Forms
-                        key={0}
+                    <FinalForm
                         onSubmit={(values: any) => handleBasicDetailsSubmit(values)}
-                        submitState={submitBasicDetails}
-                    >
-                        <Grid>
-                            <Grid.Row>
-                                <Grid.Column width={16}>
-                                    <Field
-                                        data-componentid={`${componentId}-name`}
-                                        name="name"
-                                        label="Name"
-                                        placeholder="Enter consent name"
-                                        required={true}
-                                        requiredErrorMessage="Consent name is required"
-                                        type="text"
-                                        value={wizardState?.basic?.name}
-                                    />
-                                </Grid.Column>
-                            </Grid.Row>
-                            <Grid.Row>
-                                <Grid.Column width={16}>
-                                    <Field
-                                        data-componentid={`${componentId}-type`}
-                                        name="type"
-                                        label="Consent Type"
-                                        required={true}
-                                        requiredErrorMessage="Consent type is required"
-                                        type="dropdown"
-                                        children={[
-                                            { key: "policy", text: ConsentType.POLICY, value: ConsentType.POLICY },
-                                            { key: "data_usage", text: ConsentType.DATA_USAGE, value: ConsentType.DATA_USAGE }
-                                        ]}
-                                        value={wizardState?.basic?.type ?? ConsentType.POLICY}
-                                    />
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    </Forms>
+                        initialValues={wizardState?.basic}
+                        render={({ handleSubmit }: FormRenderProps) => {
+                            basicFormRef.current = { handleSubmit };
+                            return (
+                                <form onSubmit={handleSubmit}>
+                                    <Grid>
+                                        <Grid.Row>
+                                            <Grid.Column mobile={ 16 } computer={ 10 }>
+                                                <FinalFormField
+                                                    data-componentid={`${componentId}-name`}
+                                                    name="name"
+                                                    label="Name"
+                                                    placeholder="Enter consent name"
+                                                    required
+                                                    type="text"
+                                                    component={TextFieldAdapter}
+                                                />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                        <Grid.Row>
+                                            <Grid.Column mobile={ 16 } computer={ 10 }>
+                                                <FinalFormField
+                                                    data-componentid={`${componentId}-type`}
+                                                    name="type"
+                                                    label="Consent Type"
+                                                    required
+                                                    type="dropdown"
+                                                    component={SelectFieldAdapter}
+                                                    select
+                                                    options={[
+                                                        { key: "policy", text: ConsentType.POLICY, value: ConsentType.POLICY },
+                                                        { key: "data_usage", text: ConsentType.DATA_USAGE, value: ConsentType.DATA_USAGE }
+                                                    ]}
+                                                />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                    </Grid>
+                                </form>
+                            );
+                        }}
+                    />
                 );
             case 1:
                 return (
-                    <Forms
-                        key={1}
+                    <FinalForm
                         onSubmit={(values: any) => handleAdvancedDetailsSubmit(values)}
-                        submitState={submitAdvancedDetails}
-                    >
-                        <Grid>
-                            {wizardState?.basic?.type === ConsentType.POLICY && (
-                                <Grid.Row>
-                                    <Grid.Column width={16}>
-                                        <Field
-                                            data-componentid={`${componentId}-policy-url`}
-                                            name="policyUrl"
-                                            label="Policy URL"
-                                            placeholder="Enter policy URL"
-                                            required={true}
-                                            requiredErrorMessage="Policy URL is required"
-                                            type="text"
-                                            value={wizardState?.advanced?.policyUrl}
-                                        />
-                                    </Grid.Column>
-                                </Grid.Row>
-                            )}
-                            <Grid.Row>
-                                <Grid.Column width={16}>
-                                    <Field
-                                        data-componentid={`${componentId}-description`}
-                                        name="description"
-                                        label="Description"
-                                        placeholder="Enter consent description"
-                                        required={true}
-                                        requiredErrorMessage="Consent description is required"
-                                        type="textarea"
-                                        value={wizardState?.advanced?.description}
-                                    />
-                                </Grid.Column>
-                            </Grid.Row>
-                            {wizardState?.basic?.type === ConsentType.POLICY && (
-                                <Grid.Row>
-                                    <Grid.Column width={16}>
-                                        <Field
-                                            data-componentid={`${componentId}-update-notice-message`}
-                                            name="updateNoticeMessage"
-                                            label="Update Notice Message"
-                                            placeholder="Enter update notice message"
-                                            required={false}
-                                            type="text"
-                                            value={wizardState?.advanced?.updateNoticeMessage}
-                                        />
-                                    </Grid.Column>
-                                </Grid.Row>
-                            )}
-                            {wizardState?.basic?.type === ConsentType.DATA_USAGE && (
-                                <Grid.Row>
-                                    <Grid.Column width={16}>
-                                        <Typography variant="h6" className="heading-container" >
-                                            User Attributes
-                                        </Typography>
-                                        <UserAttributeList
-                                            initialValues={selectedUserAttributes}
-                                            onAttributesChange={(hasChanged: boolean, selectedUserAttributes: SelectedUserAttributeInterface[]) => {
-                                                setSelectedUserAttributes(selectedUserAttributes);
-                                            }}
-                                            isReadOnly={false}
-                                            data-componentid={`${componentId}-user-attributes`}
-                                        />
-                                    </Grid.Column>
-                                </Grid.Row>
-                            )}
-                        </Grid>
-                    </Forms>
+                        initialValues={wizardState?.advanced}
+                        render={({ handleSubmit }: FormRenderProps) => {
+                            advancedFormRef.current = { handleSubmit };
+                            return (
+                                <form onSubmit={handleSubmit}>
+                                    <Grid>
+                                        {wizardState?.basic?.type === ConsentType.POLICY && (
+                                            <Grid.Row>
+                                                <Grid.Column  width={ 16 }>
+                                                    <FinalFormField
+                                                        data-componentid={`${componentId}-policy-url`}
+                                                        name="policyUrl"
+                                                        label="Policy URL"
+                                                        placeholder="Enter policy URL"
+                                                        required
+                                                        type="text"
+                                                        component={TextFieldAdapter}
+                                                    />
+                                                </Grid.Column>
+                                            </Grid.Row>
+                                        )}
+                                        <Grid.Row>
+                                            <Grid.Column  width={ 16 }>
+                                                <FinalFormField
+                                                    data-componentid={`${componentId}-description`}
+                                                    name="description"
+                                                    label="Description"
+                                                    placeholder="Enter consent description"
+                                                    required
+                                                    type="text"
+                                                    component={TextFieldAdapter}
+                                                    multiline
+                                                    rows={4}
+                                                />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                        {wizardState?.basic?.type === ConsentType.POLICY && (
+                                            <Grid.Row>
+                                                <Grid.Column width={ 16 }>
+                                                    <FinalFormField
+                                                        data-componentid={`${componentId}-update-notice-message`}
+                                                        name="updateNoticeMessage"
+                                                        label="Update Notice Message"
+                                                        placeholder="Enter update notice message"
+                                                        type="text"
+                                                        component={TextFieldAdapter}
+                                                    />
+                                                </Grid.Column>
+                                            </Grid.Row>
+                                        )}
+                                        {wizardState?.basic?.type === ConsentType.DATA_USAGE && (
+                                            <Grid.Row>
+                                                <Grid.Column width={16}>
+                                                    <Typography variant="h6" className="heading-container" >
+                                                        User Attributes
+                                                    </Typography>
+                                                    <UserAttributeList
+                                                        initialValues={selectedUserAttributes}
+                                                        onAttributesChange={(hasChanged: boolean, selectedUserAttributes: SelectedUserAttributeInterface[]) => {
+                                                            setSelectedUserAttributes(selectedUserAttributes);
+                                                        }}
+                                                        isReadOnly={false}
+                                                        data-componentid={`${componentId}-user-attributes`}
+                                                    />
+                                                </Grid.Column>
+                                            </Grid.Row>
+                                        )}
+                                    </Grid>
+                                </form>
+                            );
+                        }}
+                    />
                 );
             default:
                 return null;

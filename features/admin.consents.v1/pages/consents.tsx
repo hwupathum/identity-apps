@@ -16,10 +16,13 @@
  * under the License.
  */
 
+import { AppConstants } from "@wso2is/admin.core.v1/constants/app-constants";
+import { history } from "@wso2is/admin.core.v1/helpers/history";
 import { AdvancedSearchWithBasicFilters } from "@wso2is/admin.core.v1/components/advanced-search-with-basic-filters";
 import { UIConstants } from "@wso2is/admin.core.v1/constants/ui-constants";
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
 import {
+    ConfirmationModal,
     ListLayout,
     PageLayout,
     PrimaryButton
@@ -55,20 +58,24 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
     const [selectedType, setSelectedType] = useState<string>("All");
     const [showCreateWizard, setShowCreateWizard] = useState<boolean>(false);
 
+    const [showDeleteConfirmationModal, setShowDeleteConfirmationModal] = useState<boolean>(false);
+    const [deletingConsent, setDeletingConsent] = useState<ConsentListItemInterface>(null);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
     // Mock data for consents
-    const [consents] = useState<ConsentListItemInterface[]>([
+    const [consents, setConsents] = useState<ConsentListItemInterface[]>([
         {
-            id: "1",
+            id: "96d31cb9-558d-4c3b-9a6c-0da2ba9ed174",
             name: "Privacy Policy",
             type: ConsentType.POLICY
         },
         {
-            id: "2",
+            id: "ed3976cc-10cb-4a42-81c4-7d439ec9468d",
             name: "Terms and Conditions",
             type: ConsentType.POLICY
         },
         {
-            id: "3",
+            id: "2b884c27-4087-4e68-b5e8-6ae698e7790b",
             name: "Analytics Usage Consent",
             type: ConsentType.DATA_USAGE
         }
@@ -114,6 +121,22 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
      */
     const handleTypeChange = (event: React.MouseEvent<HTMLAnchorElement>, data: DropdownProps) => {
         setSelectedType(data.value as string);
+    };
+
+    /**
+     * Handles the consent delete action.
+     */
+    const handleDeleteConsent = (): void => {
+        setIsDeleting(true);
+
+        // TODO: Implement actual delete API call.
+        // Mocking the delete logic for now.
+        setTimeout(() => {
+            setConsents(consents.filter((consent: ConsentListItemInterface) => consent.id !== deletingConsent.id));
+            setIsDeleting(false);
+            setShowDeleteConfirmationModal(false);
+            setDeletingConsent(null);
+        }, 1000);
     };
 
     return (
@@ -185,16 +208,54 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
                     isLoading={false}
                     onAddConsentClick={() => setShowCreateWizard(true)}
                     onEditConsentClick={(consent: ConsentListItemInterface) => {
-                        // eslint-disable-next-line no-console
-                        console.log("Edit consent", consent);
+                        history.push(AppConstants.getPaths().get("CONSENTS_EDIT")
+                            .replace(":id", consent.id));
                     }}
                     onDeleteConsentClick={(consent: ConsentListItemInterface) => {
-                        // eslint-disable-next-line no-console
-                        console.log("Delete consent", consent);
+                        setDeletingConsent(consent);
+                        setShowDeleteConfirmationModal(true);
                     }}
                     data-componentid={`${componentId}-list`}
                 />
             </ListLayout>
+            {
+                showDeleteConfirmationModal && (
+                    <ConfirmationModal
+                        onClose={ () => setShowDeleteConfirmationModal(false) }
+                        type="negative"
+                        open={ showDeleteConfirmationModal }
+                        assertionHint={ (
+                            "I confirm that I want to delete this consent."
+                        ) }
+                        assertionType="checkbox"
+                        primaryAction="Confirm"
+                        secondaryAction="Cancel"
+                        onSecondaryActionClick={ () => setShowDeleteConfirmationModal(false) }
+                        onPrimaryActionClick={ () => handleDeleteConsent() }
+                        data-testid={ `${ componentId }-delete-confirmation-modal` }
+                        closeOnDimmerClick={ false }
+                        primaryActionLoading={ isDeleting }
+                    >
+                        <ConfirmationModal.Header
+                            data-testid={ `${ componentId }-delete-confirmation-modal-header` }
+                        >
+                            Are you sure?
+                        </ConfirmationModal.Header>
+                        <ConfirmationModal.Message
+                            attached
+                            negative
+                            data-testid={ `${ componentId }-delete-confirmation-modal-message` }
+                        >
+                            This action is irreversible and will permanently delete the consent.
+                        </ConfirmationModal.Message>
+                        <ConfirmationModal.Content
+                            data-testid={ `${ componentId }-delete-confirmation-modal-content` }
+                        >
+                            If you delete this consent, users will no longer be prompted for it.
+                        </ConfirmationModal.Content>
+                    </ConfirmationModal>
+                )
+            }
             {
                 showCreateWizard && (
                     <CreateConsentWizard
