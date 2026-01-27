@@ -569,6 +569,20 @@ export const getAppViewRoutes = (): RouteInterface[] => {
             showOnSidePanel: true
         },
         {
+            category: "extensions:manage.sidePanel.categories.userManagement",
+            component: lazy(() => import("@wso2is/admin.consents.v1/pages/consents")),
+            exact: true,
+            icon: {
+                icon: getSidePanelIcons().consents
+            },
+            id: "consents",
+            name: "extensions:develop.sidePanel.consents",
+            order: 7,
+            path: AppConstants.getPaths().get("CONSENTS"),
+            protected: true,
+            showOnSidePanel: true
+        },
+        {
             category: "console:develop.features.sidePanel.categories.application",
             children: [
                 {

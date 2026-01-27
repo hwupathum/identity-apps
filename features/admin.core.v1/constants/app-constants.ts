@@ -308,6 +308,7 @@ export class AppConstants {
             [ "CONNECTIONS", `${ AppConstants.getDeveloperViewBasePath() }/connections` ],
             [ "CONNECTION_TEMPLATES", `${ AppConstants.getDeveloperViewBasePath() }/connections/templates` ],
             [ "CONNECTION_EDIT", `${ AppConstants.getDeveloperViewBasePath() }/connections/:id` ],
+            [ "CONSENTS", `${ AppConstants.getDeveloperViewBasePath() }/consents` ],
             [ "CUSTOMIZE", `${ AppConstants.getMainViewBasePath() }/customize` ],
             [ "DEVELOPER_OVERVIEW", `${ AppConstants.getDeveloperViewBasePath() }/overview` ],
             [

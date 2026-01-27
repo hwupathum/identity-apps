@@ -466,6 +466,12 @@ export class RouteUtils {
             },
             {
                 category: manage,
+                id: "consents",
+                order: 4,
+                parent: userManagement
+            },
+            {
+                category: manage,
                 id: "agents",
                 order: 1,
                 selected: history.location.pathname.includes("/agents")
