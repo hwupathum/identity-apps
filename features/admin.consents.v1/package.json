@@ -1,0 +1,23 @@
+{
+    "private": true,
+    "name": "@wso2is/admin.consents.v1",
+    "version": "1.0.0",
+    "description": "WSO2 Identity Server Console Consents Feature",
+    "author": "WSO2",
+    "license": "Apache-2.0",
+    "dependencies": {
+        "@wso2is/admin.core.v1": "workspace:^",
+        "@wso2is/core": "^2.12.7",
+        "@wso2is/i18n": "^2.31.6",
+        "@wso2is/react-components": "^2.9.25",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-i18next": "^11.18.5",
+        "react-router-dom": "^4.3.1"
+    },
+    "peerDependencies": {
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
+        "react-router-dom": "^4.3.1"
+    }
+}

@@ -533,6 +533,9 @@ importers:
       '@wso2is/admin.connections.v1':
         specifier: ^2.35.0
         version: link:../../features/admin.connections.v1
+      '@wso2is/admin.consents.v1':
+        specifier: workspace:^
+        version: link:../../features/admin.consents.v1
       '@wso2is/admin.console-settings.v1':
         specifier: ^2.26.7
         version: link:../../features/admin.console-settings.v1
@@ -5561,6 +5564,36 @@ importers:
       typescript:
         specifier: ^4.6.4
         version: 4.9.5
+
+  features/admin.consents.v1:
+    dependencies:
+      '@wso2is/admin.claims.v1':
+        specifier: ^2.30.1
+        version: link:../admin.claims.v1
+      '@wso2is/admin.core.v1':
+        specifier: workspace:^
+        version: link:../admin.core.v1
+      '@wso2is/core':
+        specifier: ^2.12.7
+        version: link:../../modules/core
+      '@wso2is/i18n':
+        specifier: ^2.31.6
+        version: link:../../modules/i18n
+      '@wso2is/react-components':
+        specifier: ^2.9.25
+        version: link:../../modules/react-components
+      react:
+        specifier: ^18.2.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.2.0
+        version: 18.3.1(react@18.3.1)
+      react-i18next:
+        specifier: ^11.18.5
+        version: 11.18.6(i18next@21.10.0)(react-dom@18.3.1)(react@18.3.1)
+      react-router-dom:
+        specifier: ^4.3.1
+        version: 4.3.1(react@18.3.1)
 
   features/admin.console-settings.v1:
     dependencies:
@@ -27615,7 +27648,6 @@ packages:
   /@mui/base@5.0.0-alpha.108(@types/react@18.0.18)(react-dom@18.3.1)(react@18.3.1):
     resolution: {integrity: sha512-KjzRUts2i/ODlMfywhFTqTzQl+Cr9nlDSZxJcnYjrbOV/iRyQNBTDoiFJt+XEdRi0fZBHnk74AFbnP56ehybsA==}
     engines: {node: '>=12.0.0'}
-    deprecated: This package has been replaced by @base-ui/react
     peerDependencies:
       '@types/react': 18.0.18
       react: ^17.0.0 || ^18.0.0
@@ -44387,8 +44419,6 @@ packages:
       webpack: '*'
     peerDependenciesMeta:
       webpack:
-        optional: true
-      webpack-sources:
         optional: true
     dependencies:
       webpack: 5.84.1(@swc/core@1.3.99)(esbuild@0.18.20)(webpack-cli@4.10.0)
