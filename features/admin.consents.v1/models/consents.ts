@@ -16,6 +16,30 @@
  * under the License.
  */
 
-export { default as ConsentsPage } from "./pages/consents";
-export * from "./components/consents-list";
-export * from "./models/consents";
+/**
+ * Consent interface.
+ */
+export interface ConsentInterface {
+    id: string;
+    name: string;
+    type: string;
+    description: string;
+}
+
+/**
+ * Consent list item interface.
+ */
+export interface ConsentListItemInterface {
+    id: string;
+    name: string;
+    type: string;
+    description: string;
+}
+
+/**
+ * Enum for Consent types.
+ */
+export enum ConsentType {
+    DATA_USAGE = "Data Usage",
+    POLICY = "Policy"
+}
