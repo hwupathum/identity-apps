@@ -39,6 +39,19 @@
         ]
     },
     {
+        "id": "e9b2c3d4-5f6g-7h8i-9j0k-1l2m3n4o5p6q",
+        "name": "policy:cookie_policy",
+        "displayName": "Cookie Policy",
+        "description": "This cookie policy explains how we use cookies and similar technologies.",
+        "version": 1,
+        "elements": [
+            {
+                "name": "url:cookie_policy",
+                "isMandatory": true
+            }
+        ]
+    },
+    {
         "id": "2b884c27-4087-4e68-b5e8-6ae698e7790b",
         "name": "data_usage:analytics_usage_consent",
         "displayName": "Analytics Usage Consent",

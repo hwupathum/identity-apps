@@ -58,5 +58,15 @@
         "properties": {
             "url": "https://www.example.com/privacy"
         }
+    },
+    {
+        "type": "basic",
+        "name": "url:cookie_policy",
+        "displayName": "Cookie Policy URL",
+        "description": "",
+        "version": 1,
+        "properties": {
+            "url": ""
+        }
     }
 ]

@@ -18,8 +18,7 @@
 import React from "react";
 import { Code, EmphasizedSegment, Hint, PrimaryButton } from "@wso2is/react-components";
 import { Grid, Loader } from "semantic-ui-react";
-import { FinalForm, FinalFormField } from "@wso2is/form";
-import { TextFieldAdapter } from "@wso2is/form/src";
+import { FinalForm, FinalFormField, TextFieldAdapter } from "@wso2is/form";
 import Box from "@oxygen-ui/react/Box/Box";
 import { useTranslation } from "react-i18next";
 import { useGetConsent } from "../../api/use-get-consent";
@@ -28,6 +27,9 @@ import { AlertLevels, IdentifiableComponentInterface } from "@wso2is/core/models
 import { addAlert } from "@wso2is/core/store";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
+import { BrandingPreferenceTypes } from "@wso2is/common.branding.v1/models";
+import useGetBrandingPreferenceResolve from "@wso2is/common.branding.v1/api/use-get-branding-preference-resolve";
+import { AppConstants } from "@wso2is/admin.core.v1/constants/app-constants";
 
 interface EditConsentPolicyProps extends IdentifiableComponentInterface {
     consentId: string;
@@ -45,7 +47,39 @@ export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
         mutate: mutateConsent
     } = useGetConsent(consentId);
 
+    const {
+        data: brandingPreference,
+        isLoading: isBrandingLoading
+    } = useGetBrandingPreferenceResolve(AppConstants.getTenant(), BrandingPreferenceTypes.ORG);
+
     const [ isSubmitting, setIsSubmitting ] = React.useState<boolean>(false);
+
+    const brandingPolicyUrl = React.useMemo(() => {
+        if (!brandingPreference) {
+            return "";
+        }
+
+        if (consent?.name === "policy:privacy_policy") {
+            return brandingPreference.preference.urls.privacyPolicyURL;
+        } else if (consent?.name === "policy:terms_and_conditions") {
+            return brandingPreference.preference.urls.termsOfUseURL;
+        } else if (consent?.name === "policy:cookie_policy") {
+            return brandingPreference.preference.urls.cookiePolicyURL;
+        }
+
+        return "";
+    }, [ brandingPreference, consent ]);
+
+    const initialValues = React.useMemo(() => {
+        if (!consent) {
+            return null;
+        }
+
+        return {
+            ...consent,
+            policyUrl: consent.policyUrl || brandingPolicyUrl
+        };
+    }, [ consent, brandingPolicyUrl ]);
 
     const updatePolicyInfo = (values: any) => {
         setIsSubmitting(true);
@@ -96,12 +130,12 @@ export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
             >
                 <Box className="form-container with-max-width">
                     {
-                        isPolicyInfoLoading ? <Loader /> : (
+                        isPolicyInfoLoading || isBrandingLoading ? <Loader /> : (
                             <FinalForm
                                 onSubmit={(values: any) => {
                                     updatePolicyInfo(values);
                                 }}
-                                initialValues={consent}
+                                initialValues={initialValues}
                                 render={({ handleSubmit }) => (
                                     <form onSubmit={handleSubmit}>
                                         <Grid columns={1}>
@@ -140,17 +174,6 @@ export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
                                                         placeholder="Enter consent description"
                                                         multiline
                                                         rows={4}
-                                                    />
-                                                </Grid.Column>
-                                            </Grid.Row>
-                                            <Grid.Row>
-                                                <Grid.Column>
-                                                    <FinalFormField
-                                                        name="updateNoticeMessage"
-                                                        label="Update Notice Message"
-                                                        type="text"
-                                                        component={TextFieldAdapter}
-                                                        placeholder="Enter update notice message"
                                                     />
                                                 </Grid.Column>
                                             </Grid.Row>

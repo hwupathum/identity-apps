@@ -18,8 +18,7 @@
 import React from "react";
 import { EmphasizedSegment, PrimaryButton } from "@wso2is/react-components";
 import { Grid, Loader } from "semantic-ui-react";
-import { FinalForm, FinalFormField } from "@wso2is/form";
-import { TextFieldAdapter } from "@wso2is/form/src";
+import { FinalForm, FinalFormField, TextFieldAdapter } from "@wso2is/form";
 import Typography from "@oxygen-ui/react/Typography";
 import UserAttributeList, { SelectedUserAttributeInterface } from "../user-attributes/user-attribute-list";
 import Box from "@oxygen-ui/react/Box/Box";
