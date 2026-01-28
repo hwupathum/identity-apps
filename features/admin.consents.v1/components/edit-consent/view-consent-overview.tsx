@@ -21,13 +21,11 @@ import {
     ConfirmationModal,
     DangerZone,
     DangerZoneGroup,
-    EmphasizedSegment,
-    PrimaryButton
-} from "@wso2is/react-components";
+    EmphasizedSegment} from "@wso2is/react-components";
 import { Grid, Loader } from "semantic-ui-react";
 import { FinalForm, FinalFormField, TextFieldAdapter } from "@wso2is/form";
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
-import { ConsentInterface, ConsentType } from "../../models/consents";
+import { ConsentInterface, ConsentType } from "@wso2is/common.consents.v1";
 import Box from "@oxygen-ui/react/Box/Box";
 
 interface ViewConsentOverviewProps extends IdentifiableComponentInterface {

@@ -16,7 +16,9 @@
  * under the License.
  */
 
-export { default as ConsentsPage } from "./pages/consents";
-export { default as ConsentEditPage } from "./pages/consent-edit";
-export * from "./components/consents-list";
-export * from "./components/create-consent-wizard";
+export * from "./api/consents";
+export * from "./api/use-get-consents";
+export * from "./api/use-get-consent";
+export * from "./api/use-get-consent-types";
+export * from "./models/consents";
+export * from "./data";

@@ -30,7 +30,7 @@ import {
 import React, { ReactElement, ReactNode, SyntheticEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Header, Icon, SemanticICONS } from "semantic-ui-react";
-import { ConsentListItemInterface } from "../models/consents";
+import { ConsentListItemInterface } from "@wso2is/common.consents.v1";
 
 /**
  * Props interface for the Consents list component.

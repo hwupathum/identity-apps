@@ -18,14 +18,12 @@
 
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
 import { FinalForm, FinalFormField, TextFieldAdapter, SelectFieldAdapter, FormRenderProps } from "@wso2is/form";
-import { DropdownChild } from "@wso2is/forms";
 import { Code, Heading, Hint, LinkButton, PrimaryButton, Steps, useWizardAlert } from "@wso2is/react-components";
-import React, { FunctionComponent, ReactElement, useEffect, useRef, useState } from "react";
+import React, { FunctionComponent, ReactElement, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Typography from "@oxygen-ui/react/Typography";
 import { Grid, Icon, Modal } from "semantic-ui-react";
-import { useGetConsentTypes } from "../api/use-get-consent-types";
-import { ConsentType, ConsentTypeInterface, WizardStepInterface } from "../models/consents";
+import { useGetConsentTypes, ConsentType, ConsentTypeInterface, WizardStepInterface } from "@wso2is/common.consents.v1";
 import UserAttributeList, { SelectedUserAttributeInterface } from "./user-attributes/user-attribute-list";
 import { getConsentWizardStepIcons } from "../configs/ui";
 

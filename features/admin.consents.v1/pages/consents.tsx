@@ -30,10 +30,9 @@ import {
  import React, { ReactElement, useEffect, useMemo, useState } from "react";
  import { useTranslation } from "react-i18next";
  import { Dropdown, DropdownProps, Icon } from "semantic-ui-react";
- import { getConsentTypes, getConsents } from "../api/consents";
+ import { getConsentTypes, getConsents, ConsentListItemInterface, ConsentType, ConsentTypeInterface } from "@wso2is/common.consents.v1";
  import { ConsentsList } from "../components/consents-list";
  import { CreateConsentWizard } from "../components/create-consent-wizard";
- import { ConsentListItemInterface, ConsentType, ConsentTypeInterface } from "../models/consents";
 
 /**
  * Props interface for the Consents page component.

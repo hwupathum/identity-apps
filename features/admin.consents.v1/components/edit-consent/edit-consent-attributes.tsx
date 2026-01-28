@@ -25,8 +25,7 @@ import Box from "@oxygen-ui/react/Box/Box";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
-import { useGetConsent } from "../../api/use-get-consent";
-import { updateConsent } from "../../api/consents";
+import { useGetConsent, updateConsent, ConsentInterface } from "@wso2is/common.consents.v1";
 import { AlertLevels, IdentifiableComponentInterface } from "@wso2is/core/models";
 import { addAlert } from "@wso2is/core/store";
 

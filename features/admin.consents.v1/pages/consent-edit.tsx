@@ -19,9 +19,8 @@
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
 import { RouteComponentProps } from "react-router";
 import { ResourceTab, TabPageLayout } from "@wso2is/react-components";
-import React, { FunctionComponent, ReactElement, useEffect, useState } from "react";
-import { useGetConsent } from "../api/use-get-consent";
-import { ConsentInterface, ConsentType } from "../models/consents";
+import React, { FunctionComponent, ReactElement } from "react";
+import { useGetConsent, ConsentType } from "@wso2is/common.consents.v1";
 import ViewConsentOverview from "../components/edit-consent/view-consent-overview";
 import { EditConsentPolicy } from "../components/edit-consent/edit-consent-policy";
 import { ViewConsentUsers } from "../components/edit-consent/view-consent-users";
