@@ -16,48 +16,76 @@
  * under the License.
  */
 import React from "react";
-import { EmphasizedSegment, PrimaryButton } from "@wso2is/react-components";
+import { Code, EmphasizedSegment, Hint, PrimaryButton } from "@wso2is/react-components";
 import { Grid, Loader } from "semantic-ui-react";
 import { FinalForm, FinalFormField } from "@wso2is/form";
 import { TextFieldAdapter } from "@wso2is/form/src";
 import Box from "@oxygen-ui/react/Box/Box";
+import { useTranslation } from "react-i18next";
+import { useGetConsent } from "../../api/use-get-consent";
+import { updateConsent } from "../../api/consents";
+import { AlertLevels, IdentifiableComponentInterface } from "@wso2is/core/models";
+import { addAlert } from "@wso2is/core/store";
+import { useDispatch } from "react-redux";
+import { Dispatch } from "redux";
 
-interface EditConsentPolicyProps {
+interface EditConsentPolicyProps extends IdentifiableComponentInterface {
     consentId: string;
 }
 
 export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
-    const { consentId } = props;
+    const { consentId, [ "data-componentid" ]: componentId } = props;
 
-    const [isPolicyInfoLoading, setIsPolicyInfoLoading] = React.useState<boolean>(false);
+    const { t } = useTranslation();
+    const dispatch: Dispatch = useDispatch();
 
-    // Mock data lookup by consent ID
-    const getMockPolicyData = (id: string) => {
-        const mockData: Record<string, any> = {
-            "96d31cb9-558d-4c3b-9a6c-0da2ba9ed174": {
-                policyUrl: "https://example.com/privacy-policy",
-                description: "This privacy policy describes how we collect, use, and protect your personal information.",
-                updateNoticeMessage: "We have updated our privacy policy. Please review the changes."
-            },
-            "ed3976cc-10cb-4a42-81c4-7d439ec9468d": {
-                policyUrl: "https://example.com/terms-and-conditions",
-                description: "These terms and conditions outline the rules and regulations for the use of our services.",
-                updateNoticeMessage: "Our terms have been updated to reflect new service offerings."
-            }
-        };
+    const {
+        data: consent,
+        isLoading: isPolicyInfoLoading,
+        mutate: mutateConsent
+    } = useGetConsent(consentId);
 
-        return mockData[id] || {
-            policyUrl: "",
-            description: "",
-            updateNoticeMessage: ""
-        };
-    };
-
-    const [policyInfo, setPolicyInfo] = React.useState<any>(() => getMockPolicyData(consentId));
+    const [ isSubmitting, setIsSubmitting ] = React.useState<boolean>(false);
 
     const updatePolicyInfo = (values: any) => {
-        // TODO: Implement update logic
-        console.log("Updating policy info:", values);
+        setIsSubmitting(true);
+
+        const updatedElements = consent.elements.map((element: any) => {
+            if (element.name.startsWith("url:")) {
+                return {
+                    ...element,
+                    properties: {
+                        ...element.properties,
+                        url: values.policyUrl
+                    }
+                };
+            }
+
+            return element;
+        });
+
+        updateConsent(consentId, {
+            ...values,
+            elements: updatedElements
+        })
+            .then(() => {
+                dispatch(addAlert({
+                    description: "Policy updated successfully",
+                    level: AlertLevels.SUCCESS,
+                    message: "Update Successful"
+                }));
+                mutateConsent();
+            })
+            .catch(() => {
+                dispatch(addAlert({
+                    description: "Policy update failed",
+                    level: AlertLevels.ERROR,
+                    message: "Update Error"
+                }));
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     return (
@@ -73,7 +101,7 @@ export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
                                 onSubmit={(values: any) => {
                                     updatePolicyInfo(values);
                                 }}
-                                initialValues={policyInfo}
+                                initialValues={consent}
                                 render={({ handleSubmit }) => (
                                     <form onSubmit={handleSubmit}>
                                         <Grid columns={1}>
@@ -85,7 +113,19 @@ export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
                                                         type="text"
                                                         component={TextFieldAdapter}
                                                         required
-                                                        placeholder="Enter policy URL"
+                                                        placeholder={
+                                                            t("branding:brandingCustomText.form.genericFieldPlaceholder")
+                                                        }
+                                                        helperText={(
+                                                            <Hint>
+                                                                Provide the URL where the full policy document can be
+                                                                accessed. You can use placeholders like
+                                                                <Code>&#123;&#123;lang&#125;&#125;</Code>, 
+                                                                <Code>&#123;&#123;country&#125;&#125;</Code>,
+                                                                or <Code>&#123;&#123;locale&#125;&#125;</Code> to 
+                                                                customize the URL for different regions or languages.
+                                                            </Hint>
+                                                        )}
                                                     />
                                                 </Grid.Column>
                                             </Grid.Row>
@@ -116,7 +156,10 @@ export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
                                             </Grid.Row>
                                             <Grid.Row>
                                                 <Grid.Column>
-                                                    <PrimaryButton type="submit">
+                                                    <PrimaryButton 
+                                                        type="submit"
+                                                        loading={isSubmitting}
+                                                    >
                                                         Update
                                                     </PrimaryButton>
                                                 </Grid.Column>

@@ -24,7 +24,32 @@ import { FunctionComponent, ReactElement, SVGProps } from "react";
 export interface ConsentInterface {
     id: string;
     name: string;
+    displayName: string;
+    description: string;
+    version: number;
     type: string;
+    elements: (ConsentPurposeElementInterface & Partial<ConsentElementInterface>)[];
+    policyUrl?: string;
+    isDefault?: boolean;
+}
+
+/**
+ * Consent purpose element interface.
+ */
+export interface ConsentPurposeElementInterface {
+    name: string;
+    isMandatory: boolean;
+}
+
+/**
+ * Consent element interface.
+ */
+export interface ConsentElementInterface {
+    name: string;
+    displayName: string;
+    description: string;
+    version: number;
+    properties: Record<string, any>;
 }
 
 /**
@@ -33,7 +58,17 @@ export interface ConsentInterface {
 export interface ConsentListItemInterface {
     id: string;
     name: string;
+    displayName: string;
     type: string;
+    isDefault?: boolean;
+}
+
+/**
+ * Consent type interface.
+ */
+export interface ConsentTypeInterface {
+    id: string;
+    name: string;
 }
 
 /**

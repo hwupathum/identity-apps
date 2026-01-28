@@ -23,54 +23,89 @@ import { TextFieldAdapter } from "@wso2is/form/src";
 import Typography from "@oxygen-ui/react/Typography";
 import UserAttributeList, { SelectedUserAttributeInterface } from "../user-attributes/user-attribute-list";
 import Box from "@oxygen-ui/react/Box/Box";
+import { useTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { Dispatch } from "redux";
+import { useGetConsent } from "../../api/use-get-consent";
+import { updateConsent } from "../../api/consents";
+import { AlertLevels, IdentifiableComponentInterface } from "@wso2is/core/models";
+import { addAlert } from "@wso2is/core/store";
 
-interface EditConsentAttributesProps {
+interface EditConsentAttributesProps extends IdentifiableComponentInterface {
     consentId: string;
 }
 
 export const EditConsentAttributes = (props: EditConsentAttributesProps) => {
-    const { consentId } = props;
+    const { consentId, ["data-componentid"]: componentId } = props;
 
-    const [isAttributesInfoLoading, setIsAttributesInfoLoading] = React.useState<boolean>(false);
+    const { t } = useTranslation();
+    const dispatch: Dispatch = useDispatch();
 
-    // Mock data lookup by consent ID
-    const getMockAttributesData = (id: string) => {
-        const mockData: Record<string, any> = {
-            "2b884c27-4087-4e68-b5e8-6ae698e7790b": {
-                description: "This consent allows us to collect and use your data for analytics and improving our services.",
-                attributes: [
-                    {
-                        claimURI: "http://wso2.org/claims/emailaddress",
-                        displayName: "Email",
-                        mandatory: true
-                    },
-                    {
-                        claimURI: "http://wso2.org/claims/username",
-                        displayName: "Username",
-                        mandatory: false
-                    }
-                ]
-            }
-        };
+    const {
+        data: consent,
+        isLoading: isAttributesInfoLoading,
+        mutate: mutateConsent
+    } = useGetConsent(consentId);
 
-        return mockData[id] || {
-            description: "",
-            attributes: []
-        };
-    };
+    const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+    const [selectedUserAttributes, setSelectedUserAttributes] = React.useState<SelectedUserAttributeInterface[]>([]);
 
-    const mockData = getMockAttributesData(consentId);
-    const [AttributesInfo, setAttributesInfo] = React.useState<any>({
-        description: mockData.description
-    });
-    const [selectedUserAttributes, setSelectedUserAttributes] = React.useState<SelectedUserAttributeInterface[]>(
-        mockData.attributes || []
-    );
+    React.useEffect(() => {
+        if (consent && consent.elements) {
+            setSelectedUserAttributes(
+                consent.elements
+                    .filter((element: any) => element.name.startsWith("claim:"))
+                    .map((element: any) => ({
+                        claimURI: element.properties?.claim_url || "",
+                        mandatory: element.isMandatory
+                    }))
+            );
+        }
+    }, [consent]);
 
-    const updateAttributesInfo = (values: any) => {
-        // TODO: Implement update logic
-        console.log("Updating attributes info:", values);
-        console.log("Selected attributes:", selectedUserAttributes);
+    const attributes = React.useMemo(() => {
+        if (!consent || !consent.elements) {
+            return [];
+        }
+
+        return consent.elements
+            .filter((element: any) => element.name.startsWith("claim:"))
+            .map((element: any) => ({
+                claimURI: element.properties?.claim_url || "",
+                mandatory: element.isMandatory
+            }));
+    }, [consent]);
+
+    const updateConsentAttributes = (values: any) => {
+        setIsSubmitting(true);
+        updateConsent(consentId, {
+            ...values,
+            elements: [
+                ...consent.elements.filter((element: any) => !element.name.startsWith("claim:")),
+                ...selectedUserAttributes.map((attr: SelectedUserAttributeInterface) => ({
+                    name: `claim:${attr.claimURI.split("/").pop()}`, // This is a bit of a hack, but matches our mapping
+                    isMandatory: attr.mandatory
+                }))
+            ]
+        })
+            .then(() => {
+                dispatch(addAlert({
+                    description: "Attributes updated successfully",
+                    level: AlertLevels.SUCCESS,
+                    message: "Update Successful"
+                }));
+                mutateConsent();
+            })
+            .catch(() => {
+                dispatch(addAlert({
+                    description: "Attributes update failed",
+                    level: AlertLevels.ERROR,
+                    message: "Update Error"
+                }));
+            })
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     return (
@@ -84,9 +119,9 @@ export const EditConsentAttributes = (props: EditConsentAttributesProps) => {
                         isAttributesInfoLoading ? <Loader /> : (
                             <FinalForm
                                 onSubmit={(values: any) => {
-                                    updateAttributesInfo(values);
+                                    updateConsentAttributes(values);
                                 }}
-                                initialValues={AttributesInfo}
+                                initialValues={consent}
                                 render={({ handleSubmit }) => (
                                     <form onSubmit={handleSubmit}>
                                         <Grid columns={1}>
@@ -110,7 +145,7 @@ export const EditConsentAttributes = (props: EditConsentAttributesProps) => {
                                                         User Attributes
                                                     </Typography>
                                                     <UserAttributeList
-                                                        initialValues={mockData.attributes}
+                                                        initialValues={attributes}
                                                         onAttributesChange={(hasChanged: boolean, attributes: SelectedUserAttributeInterface[]) => {
                                                             setSelectedUserAttributes(attributes);
                                                         }}
@@ -121,7 +156,10 @@ export const EditConsentAttributes = (props: EditConsentAttributesProps) => {
                                             </Grid.Row>
                                             <Grid.Row>
                                                 <Grid.Column>
-                                                    <PrimaryButton type="submit">
+                                                    <PrimaryButton 
+                                                        type="submit"
+                                                        loading={isSubmitting}
+                                                    >
                                                         Update
                                                     </PrimaryButton>
                                                 </Grid.Column>

@@ -99,7 +99,7 @@ export const ConsentsList = (props: ConsentsListProps): ReactElement => {
             },
             {
                 "data-testid": `${componentId}-item-delete-button`,
-                hidden: (): boolean => false,
+                hidden: (consent: ConsentListItemInterface): boolean => consent.isDefault,
                 icon: (): SemanticICONS => "trash alternate",
                 onClick: (_e: SyntheticEvent, consent: ConsentListItemInterface): void =>
                     onDeleteConsentClick(consent),
@@ -132,7 +132,7 @@ export const ConsentsList = (props: ConsentsListProps): ReactElement => {
                             <AppAvatar
                                 image={(
                                     <AnimatedAvatar
-                                        name={consent.name}
+                                        name={consent.displayName}
                                         size="mini"
                                         data-testid={`${componentId}-item-display-name-avatar`}
                                     />
@@ -143,7 +143,10 @@ export const ConsentsList = (props: ConsentsListProps): ReactElement => {
                             />
 
                             <Header.Content>
-                                {consent.name}
+                                {consent.displayName}
+                                <Header.Subheader>
+                                    {consent.name}
+                                </Header.Subheader>
                             </Header.Content>
                         </Header>
                     );

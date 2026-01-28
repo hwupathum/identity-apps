@@ -19,12 +19,13 @@
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
 import { FinalForm, FinalFormField, TextFieldAdapter, SelectFieldAdapter, FormRenderProps } from "@wso2is/form";
 import { DropdownChild } from "@wso2is/forms";
-import { Heading, LinkButton, PrimaryButton, Steps, useWizardAlert } from "@wso2is/react-components";
-import React, { FunctionComponent, ReactElement, useRef, useState } from "react";
+import { Code, Heading, Hint, LinkButton, PrimaryButton, Steps, useWizardAlert } from "@wso2is/react-components";
+import React, { FunctionComponent, ReactElement, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Typography from "@oxygen-ui/react/Typography";
 import { Grid, Icon, Modal } from "semantic-ui-react";
-import { ConsentType, WizardStepInterface } from "../models/consents";
+import { useGetConsentTypes } from "../api/use-get-consent-types";
+import { ConsentType, ConsentTypeInterface, WizardStepInterface } from "../models/consents";
 import UserAttributeList, { SelectedUserAttributeInterface } from "./user-attributes/user-attribute-list";
 import { getConsentWizardStepIcons } from "../configs/ui";
 
@@ -71,6 +72,8 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
     const [currentStep, setCurrentWizardStep] = useState<number>(0);
     const [wizardState, setWizardState] = useState<any>({ basic: { type: ConsentType.POLICY } });
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+    const { data: consentTypes } = useGetConsentTypes();
 
     const basicFormRef = useRef<any>(null);
     const advancedFormRef = useRef<any>(null);
@@ -177,10 +180,13 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
                                                     type="dropdown"
                                                     component={SelectFieldAdapter}
                                                     select
-                                                    options={[
-                                                        { key: "policy", text: ConsentType.POLICY, value: ConsentType.POLICY },
-                                                        { key: "data_usage", text: ConsentType.DATA_USAGE, value: ConsentType.DATA_USAGE }
-                                                    ]}
+                                                    options={
+                                                        consentTypes.map((type: ConsentTypeInterface) => ({
+                                                            key: type.id,
+                                                            text: type.name,
+                                                            value: type.name
+                                                        }))
+                                                    }
                                                 />
                                             </Grid.Column>
                                         </Grid.Row>
@@ -207,10 +213,22 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
                                                         data-componentid={`${componentId}-policy-url`}
                                                         name="policyUrl"
                                                         label="Policy URL"
-                                                        placeholder="Enter policy URL"
                                                         required
                                                         type="text"
                                                         component={TextFieldAdapter}
+                                                        placeholder={
+                                                            t("branding:brandingCustomText.form.genericFieldPlaceholder")
+                                                        }
+                                                        helperText={(
+                                                            <Hint>
+                                                                Provide the URL where the full policy document can be
+                                                                accessed. You can use placeholders like
+                                                                <Code>&#123;&#123;lang&#125;&#125;</Code>, 
+                                                                <Code>&#123;&#123;country&#125;&#125;</Code>,
+                                                                or <Code>&#123;&#123;locale&#125;&#125;</Code> to 
+                                                                customize the URL for different regions or languages.
+                                                            </Hint>
+                                                        )}
                                                     />
                                                 </Grid.Column>
                                             </Grid.Row>

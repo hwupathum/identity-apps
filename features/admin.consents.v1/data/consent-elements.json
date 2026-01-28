@@ -1,0 +1,62 @@
+[
+    {
+        "type": "basic",
+        "name": "claim:emailaddress",
+        "displayName": "Email Address",
+        "description": "",
+        "version": 1,
+        "properties": {
+            "claim_url": "http://wso2.org/claims/emailaddress"
+        }
+    },
+    {
+        "type": "basic",
+        "name": "claim:phone",
+        "displayName": "Phone Number",
+        "description": "",
+        "version": 1,
+        "properties": {
+            "claim_url": "http://wso2.org/claims/telephone"
+        }
+    },
+    {
+        "type": "basic",
+        "name": "claim:username",
+        "displayName": "Username",
+        "description": "",
+        "version": 1,
+        "properties": {
+            "claim_url": "http://wso2.org/claims/username"
+        }
+    },
+    {
+        "type": "basic",
+        "name": "url:privacy_policy",
+        "displayName": "Privacy Policy URL",
+        "description": "",
+        "version": 1,
+        "properties": {
+            "url": ""
+        }
+    },
+    {
+        "type": "basic",
+        "name": "url:terms_and_conditions",
+        "displayName": "Terms and Conditions URL",
+        "description": "",
+        "version": 1,
+        "properties": {
+            "url": ""
+        }
+    },
+    {
+        "type": "basic",
+        "name": "url:custom_policy",
+        "displayName": "Custom Policy URL",
+        "description": "",
+        "version": 1,
+        "properties": {
+            "url": "https://www.example.com/privacy"
+        }
+    }
+]

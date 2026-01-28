@@ -16,13 +16,12 @@
  * under the License.
  */
 
-export { default as ConsentsPage } from "./pages/consents";
-export { default as ConsentEditPage } from "./pages/consent-edit";
-export * from "./components/consents-list";
-export * from "./components/create-consent-wizard";
-export * from "./api/consents";
-export * from "./api/use-get-consents";
-export * from "./api/use-get-consent";
-export * from "./api/use-get-consent-types";
-export * from "./models/consents";
-export * from "./data";
+import ConsentElements from "./consent-elements.json";
+import ConsentPurposes from "./consent-purposes.json";
+import ConsentTypes from "./consent-types.json";
+import DefaultPurposes from "./default-purposes.json";
+
+export const DefaultConsentPurposes = ConsentPurposes;
+export const DefaultConsentElements = ConsentElements;
+export const DefaultConsentTypes = ConsentTypes;
+export const DefaultPurposesList = DefaultPurposes;

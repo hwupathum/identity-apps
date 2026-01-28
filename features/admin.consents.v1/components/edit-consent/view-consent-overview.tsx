@@ -28,11 +28,11 @@ import { Grid, Loader } from "semantic-ui-react";
 import { FinalForm, FinalFormField } from "@wso2is/form";
 import { TextFieldAdapter } from "@wso2is/form/src";
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
-import { ConsentListItemInterface, ConsentType } from "../../models/consents";
+import { ConsentInterface, ConsentType } from "../../models/consents";
 import Box from "@oxygen-ui/react/Box/Box";
 
 interface ViewConsentOverviewProps extends IdentifiableComponentInterface {
-    consent: ConsentListItemInterface;
+    consent: ConsentInterface;
 }
 
 export default function ViewConsentOverview(props: ViewConsentOverviewProps) {
@@ -46,6 +46,7 @@ export default function ViewConsentOverview(props: ViewConsentOverviewProps) {
     const [isConsentInfoLoading, setIsConsentInfoLoading] = React.useState<boolean>(false);
     const [consentInfo, setConsentInfo] = React.useState<any>({
         name: consent?.name || "",
+        displayName: consent?.displayName || "",
         type: consent?.type || ConsentType.POLICY
     });
 
@@ -82,7 +83,7 @@ export default function ViewConsentOverview(props: ViewConsentOverviewProps) {
                                                 <Grid.Column width={10}>
                                                     <FinalFormField
                                                         disabled
-                                                        name="name"
+                                                        name="displayName"
                                                         label="Name"
                                                         type="text"
                                                         component={TextFieldAdapter}
@@ -110,16 +111,18 @@ export default function ViewConsentOverview(props: ViewConsentOverviewProps) {
                     }
                 </Box>
             </EmphasizedSegment>
-            <DangerZoneGroup
-                sectionHeader={ t("common:dangerZone") }
-            >
-                <DangerZone
-                    actionTitle={ "Delete Consent" }
-                    header={ "Delete Consent" }
-                    subheader={ "Once you delete a consent, there is no going back. Please be certain." }
-                    onActionClick={ () => setShowDeleteConfirmation(true) }
-                />
-            </DangerZoneGroup>
+            { !consent?.isDefault && (
+                <DangerZoneGroup
+                    sectionHeader={ t("common:dangerZone") }
+                >
+                    <DangerZone
+                        actionTitle={ "Delete Consent" }
+                        header={ "Delete Consent" }
+                        subheader={ "Once you delete a consent, there is no going back. Please be certain." }
+                        onActionClick={ () => setShowDeleteConfirmation(true) }
+                    />
+                </DangerZoneGroup>
+            ) }
             <ConfirmationModal
                 onClose={ () => setShowDeleteConfirmation(false) }
                 type="negative"

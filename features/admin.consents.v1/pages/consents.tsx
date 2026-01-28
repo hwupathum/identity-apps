@@ -22,17 +22,18 @@ import { AdvancedSearchWithBasicFilters } from "@wso2is/admin.core.v1/components
 import { UIConstants } from "@wso2is/admin.core.v1/constants/ui-constants";
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
 import {
-    ConfirmationModal,
-    ListLayout,
-    PageLayout,
-    PrimaryButton
-} from "@wso2is/react-components";
-import React, { ReactElement, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Dropdown, DropdownProps, Icon } from "semantic-ui-react";
-import { ConsentsList } from "../components/consents-list";
-import { CreateConsentWizard } from "../components/create-consent-wizard";
-import { ConsentListItemInterface, ConsentType } from "../models/consents";
+     ConfirmationModal,
+     ListLayout,
+     PageLayout,
+     PrimaryButton
+ } from "@wso2is/react-components";
+ import React, { ReactElement, useEffect, useMemo, useState } from "react";
+ import { useTranslation } from "react-i18next";
+ import { Dropdown, DropdownProps, Icon } from "semantic-ui-react";
+ import { getConsentTypes, getConsents } from "../api/consents";
+ import { ConsentsList } from "../components/consents-list";
+ import { CreateConsentWizard } from "../components/create-consent-wizard";
+ import { ConsentListItemInterface, ConsentType, ConsentTypeInterface } from "../models/consents";
 
 /**
  * Props interface for the Consents page component.
@@ -62,31 +63,35 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
     const [deletingConsent, setDeletingConsent] = useState<ConsentListItemInterface>(null);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-    // Mock data for consents
-    const [consents, setConsents] = useState<ConsentListItemInterface[]>([
-        {
-            id: "96d31cb9-558d-4c3b-9a6c-0da2ba9ed174",
-            name: "Privacy Policy",
-            type: ConsentType.POLICY
-        },
-        {
-            id: "ed3976cc-10cb-4a42-81c4-7d439ec9468d",
-            name: "Terms and Conditions",
-            type: ConsentType.POLICY
-        },
-        {
-            id: "2b884c27-4087-4e68-b5e8-6ae698e7790b",
-            name: "Analytics Usage Consent",
-            type: ConsentType.DATA_USAGE
-        }
-    ]);
+    const [consents, setConsents] = useState<ConsentListItemInterface[]>([]);
+    const [consentTypes, setConsentTypes] = useState<ConsentTypeInterface[]>([]);
+    const [isConsentsLoading, setConsentsLoading] = useState<boolean>(true);
+
+    /**
+     * Fetch consents and consent types on component mount.
+     */
+    useEffect(() => {
+        setConsentsLoading(true);
+
+        Promise.all([
+            getConsents(),
+            getConsentTypes()
+        ]).then(([ consentsResponse, typesResponse ]: [ ConsentListItemInterface[], ConsentTypeInterface[] ]) => {
+            setConsents(consentsResponse);
+            setConsentTypes(typesResponse);
+        }).finally(() => {
+            setConsentsLoading(false);
+        });
+    }, []);
 
     /**
      * Filtered consent list based on search and type.
      */
     const filteredConsents = useMemo(() => {
         return consents.filter((consent: ConsentListItemInterface) => {
-            const matchesSearch = !searchQuery || consent.name.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesSearch = !searchQuery || 
+                consent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                consent.displayName.toLowerCase().includes(searchQuery.toLowerCase());
             const matchesType = selectedType === "All" || consent.type === selectedType;
 
             return matchesSearch && matchesType;
@@ -155,46 +160,46 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
                 </PrimaryButton>
             )}
         >
-            <ListLayout
-                advancedSearch={(
+                        <ListLayout
+                advancedSearch={ (
                     <AdvancedSearchWithBasicFilters
-                        onFilter={handleFilter}
-                        filterAttributeOptions={[
+                        onFilter={ handleFilter }
+                        filterAttributeOptions={ [
                             {
                                 key: 0,
                                 text: t("common:name"),
                                 value: "name"
                             }
-                        ]}
-                        filterAttributePlaceholder="Search by name"
-                        filterConditionsPlaceholder="Condition"
-                        filterValuePlaceholder="Value"
-                        placeholder="Search consents by name"
-                        defaultSearchAttribute="name"
-                        defaultSearchOperator="co"
-                        triggerClearQuery={false}
-                        data-testid={`${componentId}-list-advanced-search`}
+                        ] }
+                        filterAttributePlaceholder={ "Search by name" }
+                        placeholder={ "Search consents by name" }
+                        defaultSearchAttribute={ "name" }
+                        defaultSearchOperator={ "co" }
+                        data-testid={ `${ componentId }-list-advanced-search` }
                     />
-                )}
-                currentListSize={filteredConsents.length}
-                isLoading={false}
-                listItemLimit={listItemLimit}
-                onItemsPerPageDropdownChange={handleItemsPerPageDropdownChange}
-                onPageChange={() => { }}
-                onSortStrategyChange={() => { }}
-                showPagination={true}
-                showTopActionPanel={true}
-                totalPages={Math.ceil(filteredConsents.length / listItemLimit)}
-                totalListSize={filteredConsents.length}
-                data-testid={`${componentId}-list-layout`}
+                ) }
+                currentListSize={ filteredConsents.length }
+                listItemLimit={ listItemLimit }
+                onItemsPerPageDropdownChange={ handleItemsPerPageDropdownChange }
+                onPageChange={ () => { } }
+                onSortStrategyChange={ () => { } }
+                showPagination={ true }
+                showTopActionPanel={ true }
+                totalPages={ Math.ceil(filteredConsents.length / listItemLimit) }
+                totalListSize={ filteredConsents.length }
+                isLoading={ isConsentsLoading }
+                data-testid={ `${ componentId }-list-layout` }
                 leftActionPanel={(
                     <div className="list-type-filter">
                         <Dropdown
                             selection
                             options={[
                                 { key: "all", text: "All Types", value: "All" },
-                                { key: "policy", text: ConsentType.POLICY, value: ConsentType.POLICY },
-                                { key: "data_usage", text: ConsentType.DATA_USAGE, value: ConsentType.DATA_USAGE }
+                                ...consentTypes.map((type: ConsentTypeInterface) => ({
+                                    key: type.id,
+                                    text: type.name,
+                                    value: type.name
+                                }))
                             ]}
                             value={selectedType}
                             onChange={handleTypeChange as any}
@@ -205,7 +210,7 @@ const ConsentsPage = (props: ConsentsPageProps): ReactElement => {
             >
                 <ConsentsList
                     list={filteredConsents}
-                    isLoading={false}
+                    isLoading={isConsentsLoading}
                     onAddConsentClick={() => setShowCreateWizard(true)}
                     onEditConsentClick={(consent: ConsentListItemInterface) => {
                         history.push(AppConstants.getPaths().get("CONSENTS_EDIT")

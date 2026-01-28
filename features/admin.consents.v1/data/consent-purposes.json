@@ -1,0 +1,62 @@
+[
+    {
+        "id": "96d31cb9-558d-4c3b-9a6c-0da2ba9ed174",
+        "name": "policy:privacy_policy",
+        "displayName": "Privacy Policy",
+        "description": "This privacy policy describes how we collect, use, and protect your personal information.",
+        "version": 1,
+        "elements": [
+            {
+                "name": "url:privacy_policy",
+                "isMandatory": true
+            }
+        ]
+    },
+    {
+        "id": "ed3976cc-10cb-4a42-81c4-7d439ec9468d",
+        "name": "policy:terms_and_conditions",
+        "displayName": "Terms and Conditions",
+        "description": "These terms and conditions outline the rules and regulations for the use of our services.",
+        "version": 1,
+        "elements": [
+            {
+                "name": "url:terms_and_conditions",
+                "isMandatory": true
+            }
+        ]
+    },
+    {
+        "id": "f4e1d3b3-1f4c-4f4e-8e2e-3c3b6e2f5a1a",
+        "name": "policy:custom_policy",
+        "displayName": "Custom Policy",
+        "description": "",
+        "version": 1,
+        "elements": [
+            {
+                "name": "url:custom_policy",
+                "isMandatory": false
+            }
+        ]
+    },
+    {
+        "id": "2b884c27-4087-4e68-b5e8-6ae698e7790b",
+        "name": "data_usage:analytics_usage_consent",
+        "displayName": "Analytics Usage Consent",
+        "description": "",
+        "version": 1,
+        "elements": [
+            {
+                "name": "claim:emailaddress",
+                "isMandatory": true
+            },
+            {
+                "name": "claim:phone",
+                "isMandatory": false
+            },
+            {
+                "name": "claim:username",
+                "isMandatory": true
+            }
+        ]
+    }
+]

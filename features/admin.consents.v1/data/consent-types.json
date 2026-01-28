@@ -1,0 +1,10 @@
+[
+    {
+        "id": "policy",
+        "name": "Policy"
+    },
+    {
+        "id": "data_usage",
+        "name": "Data Usage"
+    }
+]

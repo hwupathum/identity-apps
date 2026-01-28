@@ -19,8 +19,9 @@
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
 import { RouteComponentProps } from "react-router";
 import { ResourceTab, TabPageLayout } from "@wso2is/react-components";
-import React, { FunctionComponent, ReactElement, useState } from "react";
-import { ConsentListItemInterface, ConsentType } from "../models/consents";
+import React, { FunctionComponent, ReactElement, useEffect, useState } from "react";
+import { useGetConsent } from "../api/use-get-consent";
+import { ConsentInterface, ConsentType } from "../models/consents";
 import ViewConsentOverview from "../components/edit-consent/view-consent-overview";
 import { EditConsentPolicy } from "../components/edit-consent/edit-consent-policy";
 import { ViewConsentUsers } from "../components/edit-consent/view-consent-users";
@@ -47,74 +48,55 @@ const ConsentEditPage: FunctionComponent<ConsentEditPageProps> = (
 
     const id = match?.params?.id;
 
-    const [isConsentRequestLoading, setConsentRequestLoading] = useState<boolean>(undefined);
-
-    // Mock data lookup by ID
-    const getMockConsentById = (consentId: string): ConsentListItemInterface | null => {
-        const mockConsents: Record<string, ConsentListItemInterface> = {
-            "96d31cb9-558d-4c3b-9a6c-0da2ba9ed174": {
-                id: "96d31cb9-558d-4c3b-9a6c-0da2ba9ed174",
-                name: "Privacy Policy",
-                type: ConsentType.POLICY
-            },
-            "ed3976cc-10cb-4a42-81c4-7d439ec9468d": {
-                id: "ed3976cc-10cb-4a42-81c4-7d439ec9468d",
-                name: "Terms and Conditions",
-                type: ConsentType.POLICY
-            },
-            "2b884c27-4087-4e68-b5e8-6ae698e7790b": {
-                id: "2b884c27-4087-4e68-b5e8-6ae698e7790b",
-                name: "Analytics Usage Consent",
-                type: ConsentType.DATA_USAGE
-            }
-        };
-
-        return mockConsents[consentId] || null;
-    };
-
-    const [consent] = useState<ConsentListItemInterface>(() => getMockConsentById(id));
+    const { data: consent, isLoading: isConsentRequestLoading } = useGetConsent(id);
 
     const handleBackButtonClick = (): void => {
         window.history.back();
     };
 
-    const resolveTabPanes = () => ([
-        {
-            menuItem: "General",
-            render: () => (
-                <ResourceTab.Pane controlledSegmentation>
-                    <ViewConsentOverview consent={consent} />
-                </ResourceTab.Pane>
-            )
-        },
-        {
-            menuItem: "Advanced",
-            render: () => (
-                <ResourceTab.Pane controlledSegmentation>
-                    {
-                        consent.type === ConsentType.POLICY ? (
-                            <EditConsentPolicy consentId={consent.id} />
-                        ) : (
-                            <EditConsentAttributes consentId={consent.id} />
-                        )
-                    }
-                </ResourceTab.Pane>
-            )
-        },
-        {
-            menuItem: "Users",
-            render: () => (
-                <ResourceTab.Pane controlledSegmentation>
-                    <ViewConsentUsers consentId={consent.id} />
-                </ResourceTab.Pane>
-            )
+    const resolveTabPanes = () => {
+        if (!consent) {
+            return [];
         }
-    ]);
+
+        return [
+            {
+                menuItem: "General",
+                render: () => (
+                    <ResourceTab.Pane controlledSegmentation>
+                        <ViewConsentOverview consent={consent} />
+                    </ResourceTab.Pane>
+                )
+            },
+            {
+                menuItem: "Advanced",
+                render: () => (
+                    <ResourceTab.Pane controlledSegmentation>
+                        {
+                            consent.type === ConsentType.POLICY ? (
+                                <EditConsentPolicy consentId={consent.id} />
+                            ) : (
+                                <EditConsentAttributes consentId={consent.id} />
+                            )
+                        }
+                    </ResourceTab.Pane>
+                )
+            },
+            {
+                menuItem: "Users",
+                render: () => (
+                    <ResourceTab.Pane controlledSegmentation>
+                        <ViewConsentUsers consentId={consent.id} />
+                    </ResourceTab.Pane>
+                )
+            }
+        ];
+    };
 
     return (
         <TabPageLayout
             pageTitle="Edit Consent"
-            title={consent.name}
+            title={consent?.displayName || ""}
             data-componentid={`${componentId}-layout`}
             isLoading={isConsentRequestLoading}
             backButton={{
