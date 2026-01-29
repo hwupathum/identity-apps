@@ -22,6 +22,7 @@ import React, { FunctionComponent, ReactElement } from "react";
 import ButtonAdapter from "./adapters/button-adapter";
 import CaptchaAdapter from "./adapters/captcha-adapter";
 import ChoiceAdapter from "./adapters/choice-adapter";
+import ConsentListAdapter from "./adapters/consent-list-adapter";
 import DividerAdapter from "./adapters/divider-adapter";
 import FormAdapter from "./adapters/form-adapter";
 import ImageAdapter from "./adapters/image-adapter";
@@ -100,6 +101,8 @@ export const CommonElementFactory: FunctionComponent<CommonElementFactoryPropsIn
         return <ImageAdapter stepId={ stepId } resource={ resource } />;
     } else if (resource.type === ElementTypes.Captcha) {
         return <CaptchaAdapter stepId={ stepId } resource={ resource } />;
+    } else if (resource.type === ElementTypes.Consent) {
+        return <ConsentListAdapter stepId={ stepId } resource={ resource } />;
     } else if (resource.type === ElementTypes.Resend) {
         return <ResendButtonAdapter stepId={ stepId } resource={ resource } />;
     }

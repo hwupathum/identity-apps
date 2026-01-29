@@ -44,7 +44,8 @@ export enum ElementCategories {
     Action = "ACTION",
     Block = "BLOCK",
     Display = "DISPLAY",
-    Field = "FIELD"
+    Field = "FIELD",
+    Consent = "CONSENT"
 }
 
 export enum ElementTypes {
@@ -57,6 +58,7 @@ export enum ElementTypes {
     RichText = "RICH_TEXT",
     Typography = "TYPOGRAPHY",
     Resend = "RESEND",
+    Consent = "CONSENT"
 }
 
 export enum BlockTypes {

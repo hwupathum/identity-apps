@@ -83,7 +83,8 @@ class VisualFlowConstants {
         ElementTypes.RichText,
         ElementTypes.Divider,
         ElementTypes.Image,
-        ElementTypes.Resend
+        ElementTypes.Resend,
+        ElementTypes.Consent
     ];
 
     public static readonly FLOW_BUILDER_STATIC_CONTENT_ALLOWED_RESOURCE_TYPES: string[] = [

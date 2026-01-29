@@ -136,6 +136,21 @@ const ResourceProperties: FunctionComponent<ResourcePropertiesPropsInterface> = 
                     { renderElementPropertyFactory() }
                 </>
             );
+        case ElementCategories.Consent:
+            return (
+                <>
+                    { Object.entries(resource.config || {}).map(([ key, value ]: [ string, any ]) => (
+                        <ResourcePropertyFactory
+                            key={ `${resource.id}-${key}` }
+                            resource={ resource }
+                            propertyKey={ key }
+                            propertyValue={ value }
+                            data-componentid={ `${resource.id}-${key}` }
+                            onChange={ onChange }
+                        />
+                    )) }
+                </>
+            );
         case ElementCategories.Action:
             return (
                 <>

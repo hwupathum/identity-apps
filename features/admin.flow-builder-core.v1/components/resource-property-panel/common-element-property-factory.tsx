@@ -20,6 +20,7 @@ import TextField from "@oxygen-ui/react/TextField";
 import { IdentifiableComponentInterface } from "@wso2is/core/models";
 import React, { FunctionComponent, ReactElement } from "react";
 import CheckboxPropertyField from "./checkbox-property-field";
+import ConsentPropertyField from "./consent-property-field";
 import RichTextWithTranslation from "./rich-text/rich-text-with-translation";
 import TextPropertyField from "./text-property-field";
 import FlowBuilderElementConstants from "../../constants/flow-builder-element-constants";
@@ -69,6 +70,19 @@ const CommonElementPropertyFactory: FunctionComponent<CommonElementPropertyFacto
     onChange,
     ...rest
 }: CommonElementPropertyFactoryPropsInterface): ReactElement | null => {
+    if (propertyKey === "consent") {
+        return (
+            <ConsentPropertyField
+                resource={ resource }
+                propertyKey={ propertyKey }
+                propertyValue={ propertyValue }
+                onChange={ onChange }
+                data-componentid={ `${componentId}-${propertyKey}` }
+                { ...rest }
+            />
+        );
+    }
+
     if (propertyKey === "text") {
         if (resource.type === ElementTypes.RichText) {
             return (

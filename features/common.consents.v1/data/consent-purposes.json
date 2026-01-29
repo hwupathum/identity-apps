@@ -71,5 +71,18 @@
                 "isMandatory": true
             }
         ]
+    },
+    {
+        "id": "3c995d38-5198-4f79-c6d9-7bf7a9f88a1c",
+        "name": "data_usage:marketing_communications_consent",
+        "displayName": "Marketing Communications Consent",
+        "description": "",
+        "version": 1,
+        "elements": [
+            {
+                "name": "claim:emailaddress",
+                "isMandatory": true
+            }
+        ]
     }
 ]

@@ -164,6 +164,24 @@
     },
     {
         "resourceType": "ELEMENT",
+        "category": "CONSENT",
+        "type": "CONSENT",
+        "version": "0.1.0",
+        "deprecated": false,
+        "variant": "CONSENT_LIST",
+        "display": {
+            "label": "Consent List",
+            "description": "",
+            "image": "assets/images/icons/shield-check.svg"
+        },
+        "config": {
+            "consent": "",
+            "displayName": "",
+            "description": ""
+        }
+    },
+    {
+        "resourceType": "ELEMENT",
         "category": "FIELD",
         "type": "INPUT",
         "version": "0.1.0",
