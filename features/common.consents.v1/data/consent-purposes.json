@@ -3,7 +3,7 @@
         "id": "96d31cb9-558d-4c3b-9a6c-0da2ba9ed174",
         "name": "policy:privacy_policy",
         "displayName": "Privacy Policy",
-        "description": "This privacy policy describes how we collect, use, and protect your personal information.",
+        "description": "",
         "version": 1,
         "elements": [
             {
@@ -16,7 +16,7 @@
         "id": "ed3976cc-10cb-4a42-81c4-7d439ec9468d",
         "name": "policy:terms_and_conditions",
         "displayName": "Terms and Conditions",
-        "description": "These terms and conditions outline the rules and regulations for the use of our services.",
+        "description": "",
         "version": 1,
         "elements": [
             {
@@ -42,7 +42,7 @@
         "id": "e9b2c3d4-5f6g-7h8i-9j0k-1l2m3n4o5p6q",
         "name": "policy:cookie_policy",
         "displayName": "Cookie Policy",
-        "description": "This cookie policy explains how we use cookies and similar technologies.",
+        "description": "",
         "version": 1,
         "elements": [
             {

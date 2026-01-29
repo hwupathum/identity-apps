@@ -164,20 +164,6 @@ export const EditConsentPolicy = (props: EditConsentPolicyProps) => {
                                             </Grid.Row>
                                             <Grid.Row>
                                                 <Grid.Column>
-                                                    <FinalFormField
-                                                        name="description"
-                                                        label="Description"
-                                                        type="text"
-                                                        component={TextFieldAdapter}
-                                                        required
-                                                        placeholder="Enter consent description"
-                                                        multiline
-                                                        rows={4}
-                                                    />
-                                                </Grid.Column>
-                                            </Grid.Row>
-                                            <Grid.Row>
-                                                <Grid.Column>
                                                     <PrimaryButton 
                                                         type="submit"
                                                         loading={isSubmitting}

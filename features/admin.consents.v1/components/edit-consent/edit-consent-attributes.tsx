@@ -125,20 +125,6 @@ export const EditConsentAttributes = (props: EditConsentAttributesProps) => {
                                         <Grid columns={1}>
                                             <Grid.Row>
                                                 <Grid.Column>
-                                                    <FinalFormField
-                                                        name="description"
-                                                        label="Description"
-                                                        type="text"
-                                                        component={TextFieldAdapter}
-                                                        required
-                                                        placeholder="Enter consent description"
-                                                        multiline
-                                                        rows={4}
-                                                    />
-                                                </Grid.Column>
-                                            </Grid.Row>
-                                            <Grid.Row>
-                                                <Grid.Column>
                                                     <Typography variant="h6" className="heading-container">
                                                         User Attributes
                                                     </Typography>

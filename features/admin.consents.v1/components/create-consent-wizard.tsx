@@ -231,35 +231,6 @@ export const CreateConsentWizard: FunctionComponent<CreateConsentWizardProps> = 
                                                 </Grid.Column>
                                             </Grid.Row>
                                         )}
-                                        <Grid.Row>
-                                            <Grid.Column  width={ 16 }>
-                                                <FinalFormField
-                                                    data-componentid={`${componentId}-description`}
-                                                    name="description"
-                                                    label="Description"
-                                                    placeholder="Enter consent description"
-                                                    required
-                                                    type="text"
-                                                    component={TextFieldAdapter}
-                                                    multiline
-                                                    rows={4}
-                                                />
-                                            </Grid.Column>
-                                        </Grid.Row>
-                                        {wizardState?.basic?.type === ConsentType.POLICY && (
-                                            <Grid.Row>
-                                                <Grid.Column width={ 16 }>
-                                                    <FinalFormField
-                                                        data-componentid={`${componentId}-update-notice-message`}
-                                                        name="updateNoticeMessage"
-                                                        label="Update Notice Message"
-                                                        placeholder="Enter update notice message"
-                                                        type="text"
-                                                        component={TextFieldAdapter}
-                                                    />
-                                                </Grid.Column>
-                                            </Grid.Row>
-                                        )}
                                         {wizardState?.basic?.type === ConsentType.DATA_USAGE && (
                                             <Grid.Row>
                                                 <Grid.Column width={16}>
